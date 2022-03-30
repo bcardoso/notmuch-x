@@ -1,0 +1,101 @@
+#+AUTHOR: Bruno Cardoso <cardoso.bc@gmail.com>
+#+DATE: 2022-03-30
+#+STARTUP: indent content
+
+* notmuch-x
+
+This package provides a set of custom extensions for the [[https://notmuchmail.org/][notmuch]] emacs-based interface.
+
+
+** Installation
+
+Clone this repo and add it to your =load-path=:
+
+#+begin_src emacs-lisp
+(add-to-list 'load-path "/path/to/notmuch-x")
+(require 'notmuch-x)
+#+end_src
+
+Or, with use-package + straight.el:
+
+#+begin_src emacs-lisp
+(use-package notmuch-x
+  :straight (notmuch-x :host github :repo "bcardoso/notmuch-x"))
+#+end_src
+
+
+** Usage
+
+Starting notmuch with =notmuch-x-run-notmuch= will also turn on the =notmuch-x-mode-line-indicator= and set the database update timer (=notmuch-x-update-timer=) to find and import any new messages periodically. The relevant customizable variables are accessible through the customize interface:
+
+- =M-x customize-group RET notmuch-x=
+
+
+** Example configuration
+
+Below is my current =notmuch-x= configuration and keybindings.
+
+#+begin_src emacs-lisp
+(use-package notmuch-x
+  :straight (notmuch-x :host github :repo "bcardoso/notmuch-x")
+  :after notmuch
+  :bind (("C-c m"            . notmuch-x-run-notmuch)
+         ("C-c M"            . notmuch-x-update-dwim)
+         ("C-x m"            . notmuch-mua-new-mail)
+         (:map notmuch-search-mode-map
+               ("Q"          . notmuch-x-kill-all-search-buffers)
+               ("S"          . notmuch-x-edit-current-search)
+               ("U"          . notmuch-unthreaded)
+               ("u"          . my/notmuch-tag-toggle-unread)
+               ("f"          . my/notmuch-tag-toggle-flagged)
+               ("a"          . my/notmuch-tag-archived)
+               ("T"          . my/notmuch-tag-todo)
+               ("i"          . my/notmuch-tag-inbox)
+               ("d"          . my/notmuch-tag-trash))
+         (:map notmuch-show-mode-map
+               ("<C-return>" . notmuch-x-toggle-thread-visibility)
+               ("<RET>"      . notmuch-x-toggle-message-or-browse-url)
+               ("<tab>"      . notmuch-x-next-button-or-link)
+               ("<backtab>"  . notmuch-x-previous-button-or-link)
+               ("n"          . notmuch-show-next-message)
+               ("N"          . notmuch-show-next-open-message)
+               ("p"          . notmuch-show-previous-message)
+               ("P"          . notmuch-show-previous-open-message)
+               ("o"          . notmuch-x-view-part-in-browser)
+               ("u"          . my/notmuch-tag-toggle-unread)
+               ("f"          . my/notmuch-tag-toggle-flagged)
+               ("a"          . my/notmuch-tag-archived)
+               ("T"          . my/notmuch-tag-todo)
+               ("i"          . my/notmuch-tag-inbox)
+               ("d"          . my/notmuch-tag-trash)))
+  :config
+  (defun my/notmuch-tag-toggle-unread ()
+    "Toggle 'unread' tag."
+    (interactive)
+    (notmuch-x-tag-toggle-dwim "unread"))
+
+  (defun my/notmuch-tag-toggle-flagged ()
+    "Toggle 'flagged' tag."
+    (interactive)
+    (notmuch-x-tag-toggle-dwim "flagged"))
+
+  (defun my/notmuch-tag-archived ()
+    "Tag thread as 'archived'."
+    (interactive)
+    (notmuch-x-tag-thread-dwim '("+archived" "-inbox" "-todo" "-trash" "-unread") t))
+
+  (defun my/notmuch-tag-todo ()
+    "Tag selected message(s) as 'todo'."
+    (interactive)
+    (notmuch-x-tag-dwim '("+todo" "+inbox" "-archived" "-trash")))
+
+  (defun my/notmuch-tag-inbox ()
+    "Tag selected message(s) as 'inbox'."
+    (interactive)
+    (notmuch-x-tag-dwim '("+inbox" "-trash" "-archived")))
+
+  (defun my/notmuch-tag-trash ()
+    "Tag selected message(s) as 'trash'."
+    (interactive)
+    (notmuch-x-tag-dwim '("+trash" "-inbox" "-archived" "-todo" "-unread"))))
+#+end_src
