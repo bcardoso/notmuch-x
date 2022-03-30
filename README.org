@@ -33,7 +33,7 @@ Starting notmuch with =notmuch-x-run-notmuch= will also turn on the =notmuch-x-m
 
 ** Example configuration
 
-Below is my current =notmuch-x= configuration and keybindings.
+Below are my current =notmuch-x= configuration and keybindings.
 
 #+begin_src emacs-lisp
 (use-package notmuch-x
