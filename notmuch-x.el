@@ -160,6 +160,9 @@
                                     (mouse-1 . notmuch-x-search-new-mail))
                 'help-echo "New mail")))
 
+(defvar notmuch-x--indicator-timer nil
+  "The mode line indicator timer.")
+
 (defvar notmuch-x-mode-line-indicator nil
   "Mode line indicator element.")
 
@@ -168,30 +171,25 @@
   (let* ((count (notmuch-saved-search-count notmuch-x--search-query-new-mail))
          (indicator (notmuch-x--mode-string count)))
     (cond ((and (not disable) (>= (string-to-number count) 1))
+           (if (not notmuch-x--indicator-timer)
+               (setq notmuch-x--indicator-timer
+                     (run-at-time t notmuch-x--indicator-timer-update-interval
+                                  #'notmuch-x-mode-line-indicator)))
            (add-to-list 'global-mode-string indicator)
            (setq notmuch-x-mode-line-indicator indicator))
           (t
+           (cancel-function-timers #'notmuch-x-mode-line-indicator)
            (setq global-mode-string
-                 (delete notmuch-x-mode-line-indicator
-                         global-mode-string))
+                 (delete notmuch-x-mode-line-indicator global-mode-string))
            (setq notmuch-x--indicator-timer nil)
            (setq notmuch-x-mode-line-indicator nil)))))
-
-(defvar notmuch-x--indicator-timer nil
-  "The mode line indicator timer.")
 
 ;;;###autoload
 (defun notmuch-x-toggle-mode-line-indicator (&optional force-on)
   "Toggle mode line indicator for new mail."
   (interactive)
   (if (and (not force-on) notmuch-x-mode-line-indicator)
-      (progn
-        (cancel-function-timers #'notmuch-x-mode-line-indicator)
-        (notmuch-x-mode-line-indicator 'disable))
-    (if (not notmuch-x--indicator-timer)
-        (setq notmuch-x--indicator-timer
-              (run-at-time t notmuch-x--indicator-timer-update-interval
-                           #'notmuch-x-mode-line-indicator)))
+      (notmuch-x-mode-line-indicator 'disable)
     (notmuch-x-mode-line-indicator)))
 
 
