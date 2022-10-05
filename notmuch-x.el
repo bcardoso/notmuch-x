@@ -71,15 +71,22 @@
   :group 'notmuch-x
   :type 'string)
 
+(defcustom notmuch-x--auto-update t
+  "When non-nil, `notmuch-x-run-notmuch' will also start the `notmuch-x-update-timer'."
+  :tag "Temporary directory to save MIME parts"
+  :group 'notmuch-x
+  :type 'string)
+
 
 ;;;; Update Database
 
 ;;;###autoload
 (defun notmuch-x-run-notmuch ()
-  "Run `notmuch', `notmuch-x-update-timer', and `notmuch-x-toggle-mode-line-indicator'."
+  "Run `notmuch' and `notmuch-x-toggle-mode-line-indicator'. When user
+option `notmuch-x--auto-update' is non-nil, also run `notmuch-x-update-timer'."
   (interactive)
   (if (not notmuch-x--update-timer)
-      (progn (notmuch-x-update-timer)
+      (progn (if notmuch-x--auto-update (notmuch-x-update-timer))
              (notmuch-x-update-dwim)
              (notmuch-x-toggle-mode-line-indicator t)))
   (notmuch))
