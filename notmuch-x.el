@@ -159,13 +159,16 @@ option `notmuch-x--auto-update' is non-nil, also run `notmuch-x-update-timer'."
 
 (defun notmuch-x--mode-string (count)
   "Add properties to mode line indicator."
-  (when (not (string= count "0"))
-    (propertize "@M"
-                'display (when (display-graphic-p) display-time-mail-icon)
-                'mouse-face 'mode-line-highlight
-                'keymap '(mode-line keymap
-                                    (mouse-1 . notmuch-x-search-new-mail))
-                'help-echo "New mail")))
+  (let ((mail-icon (find-image
+                    '((:type xpm :file "letter.xpm" :ascent center)
+                      (:type pbm :file "letter.pbm" :ascent center)))))
+    (when (not (string= count "0"))
+      (propertize "@M"
+                  'display (when (display-graphic-p) mail-icon)
+                  'mouse-face 'mode-line-highlight
+                  'keymap '(mode-line keymap
+                                      (mouse-1 . notmuch-x-search-new-mail))
+                  'help-echo "New mail"))))
 
 (defvar notmuch-x--indicator-timer nil
   "The mode line indicator timer.")
