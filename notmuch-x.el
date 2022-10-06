@@ -73,7 +73,7 @@
 
 (defcustom notmuch-x--auto-update t
   "When non-nil, `notmuch-x-run-notmuch' will also start the `notmuch-x-update-timer'."
-  :tag "Temporary directory to save MIME parts"
+  :tag "Auto update"
   :group 'notmuch-x
   :type 'string)
 
