@@ -30,6 +30,7 @@
 ;;; Code:
 
 (require 'notmuch)
+(require 'browse-url)
 
 
 ;;;; Custom variables
@@ -72,13 +73,16 @@
   :type 'string)
 
 (defcustom notmuch-x--auto-update t
-  "When non-nil, `notmuch-x-run-notmuch' will also start the `notmuch-x-update-timer'."
+  "When non-nil, `notmuch-x-run-notmuch' will start `notmuch-x-update-timer'."
   :tag "Auto update"
   :group 'notmuch-x
   :type 'string)
 
 
 ;;;; Update Database
+
+(defvar notmuch-x--update-timer nil
+  "The update timer set by `notmuch-x-update-timer'.")
 
 ;;;###autoload
 (defun notmuch-x-run-notmuch ()
