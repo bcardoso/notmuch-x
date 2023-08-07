@@ -52,6 +52,12 @@
   :group 'notmuch-x
   :type 'string)
 
+(defcustom notmuch-x--notmuch-update-notify t
+  "Notify in echo area when `notmuch-x-update' starts and finishes."
+  :tag "Notmuch retrieval output buffer"
+  :group 'notmuch-x
+  :type 'string)
+
 (defcustom notmuch-x--search-query-new-mail
   "date:2d..now and tag:unread and not tag:trash"
   "Search query for new mail run by `notmuch-x-mode-line-indicator'."
@@ -125,7 +131,8 @@ option `notmuch-x--auto-update' is non-nil, also run `notmuch-x-update-timer'."
 (defun notmuch-x-update ()
   "Retrieve mail and update notmuch database."
   (interactive)
-  (message "[notmuch] Retrieving mail...")
+  (when notmuch-x--notmuch-update-notify
+    (message "[notmuch] Retrieving mail..."))
   (make-process :name     "notmuch-update"
                 :buffer   notmuch-x--notmuch-update-buffer
                 :command  '("notmuch" "new")
@@ -140,7 +147,8 @@ option `notmuch-x--auto-update' is non-nil, also run `notmuch-x-update-timer'."
     (goto-char (point-max)))
   (if (string= event "finished\n")
       (progn
-        (message "[notmuch] Retrieving mail...done")
+        (when notmuch-x--notmuch-update-notify
+          (message "[notmuch] Retrieving mail...done"))
         (with-temp-buffer
           (insert (format "\nLast database update: %s\n\n"
                           (format-time-string "%F %T")))
