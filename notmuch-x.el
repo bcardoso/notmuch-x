@@ -101,21 +101,38 @@ option `notmuch-x--auto-update' is non-nil, also run `notmuch-x-update-timer'."
              (notmuch-x-toggle-mode-line-indicator t)))
   (notmuch))
 
-(defvar notmuch-x--notmuch-update-notify-when-interactive nil
+(defvar notmuch-x--notmuch-update-notify-if-interactive nil
   "Notify update when `notmuch-x-update-dwim' is called interactively.")
+
+(defun notmuch-x--update-notify (str)
+  "Notify update status."
+  (when (or notmuch-x--notmuch-update-notify-if-interactive
+            notmuch-x--notmuch-update-notify)
+    (message str)))
 
 ;;;###autoload
 (defun notmuch-x-update-dwim ()
   "Retrieve mail and update notmuch database. With ARG, start timer."
   (interactive)
-  (setq notmuch-x--notmuch-update-notify-when-interactive
-        (called-interactively-p 'interactive))
   (if current-prefix-arg
       (progn
         (if (not notmuch-x--update-timer)
             (notmuch-x-update-timer)
           (message "notmuch-x-update-timer is already running.")))
+    (setq notmuch-x--notmuch-update-notify-if-interactive
+          (called-interactively-p 'interactive))
     (notmuch-x-update)))
+
+(defun notmuch-x-update ()
+  "Retrieve mail and update notmuch database."
+  (interactive)
+  (notmuch-x--update-notify "[notmuch] Retrieving mail...")
+  (make-process :name     "notmuch-update"
+                :buffer   notmuch-x--notmuch-update-buffer
+                :command  '("notmuch" "new")
+                :sentinel 'notmuch-x-update-sentinel)
+  (with-current-buffer notmuch-x--notmuch-update-buffer
+    (special-mode)))
 
 (defvar notmuch-x--update-timer nil
   "The notmuch update timer.")
@@ -133,19 +150,6 @@ option `notmuch-x--auto-update' is non-nil, also run `notmuch-x-update-timer'."
   (cancel-function-timers #'notmuch-x-update)
   (setq notmuch-x--update-timer nil))
 
-(defun notmuch-x-update ()
-  "Retrieve mail and update notmuch database."
-  (interactive)
-  (when (or notmuch-x--notmuch-update-notify-when-interactive
-            notmuch-x--notmuch-update-notify)
-    (message "[notmuch] Retrieving mail..."))
-  (make-process :name     "notmuch-update"
-                :buffer   notmuch-x--notmuch-update-buffer
-                :command  '("notmuch" "new")
-                :sentinel 'notmuch-x-update-sentinel)
-  (with-current-buffer notmuch-x--notmuch-update-buffer
-    (special-mode)))
-
 (defun notmuch-x-update-sentinel (process event)
   "Sentinel to run after notmuch update."
   (with-current-buffer notmuch-x--notmuch-update-buffer
@@ -153,9 +157,7 @@ option `notmuch-x--auto-update' is non-nil, also run `notmuch-x-update-timer'."
     (goto-char (point-max)))
   (if (string= event "finished\n")
       (progn
-        (when (or notmuch-x--notmuch-update-notify-when-interactive
-                  notmuch-x--notmuch-update-notify)
-          (message "[notmuch] Retrieving mail...done"))
+        (notmuch-x--update-notify "[notmuch] Retrieving mail...done")
         (with-temp-buffer
           (insert (format "\nLast database update: %s\n\n"
                           (format-time-string "%F %T")))
@@ -165,7 +167,8 @@ option `notmuch-x--auto-update' is non-nil, also run `notmuch-x-update-timer'."
       (message "[notmuch] Something went wrong.")
       (switch-to-buffer notmuch-x--notmuch-update-buffer)))
   (with-current-buffer notmuch-x--notmuch-update-buffer
-    (setq-local buffer-read-only t)))
+    (setq-local buffer-read-only t))
+  (setq notmuch-x--notmuch-update-notify-if-interactive nil))
 
 
 ;;;; Mail Indicator
