@@ -101,10 +101,15 @@ option `notmuch-x--auto-update' is non-nil, also run `notmuch-x-update-timer'."
              (notmuch-x-toggle-mode-line-indicator t)))
   (notmuch))
 
+(defvar notmuch-x--notmuch-update-notify-when-interactive nil
+  "Notify update when `notmuch-x-update-dwim' is called interactively.")
+
 ;;;###autoload
 (defun notmuch-x-update-dwim ()
   "Retrieve mail and update notmuch database. With ARG, start timer."
   (interactive)
+  (setq notmuch-x--notmuch-update-notify-when-interactive
+        (called-interactively-p 'interactive))
   (if current-prefix-arg
       (progn
         (if (not notmuch-x--update-timer)
@@ -131,7 +136,8 @@ option `notmuch-x--auto-update' is non-nil, also run `notmuch-x-update-timer'."
 (defun notmuch-x-update ()
   "Retrieve mail and update notmuch database."
   (interactive)
-  (when notmuch-x--notmuch-update-notify
+  (when (or notmuch-x--notmuch-update-notify-when-interactive
+            notmuch-x--notmuch-update-notify)
     (message "[notmuch] Retrieving mail..."))
   (make-process :name     "notmuch-update"
                 :buffer   notmuch-x--notmuch-update-buffer
@@ -147,7 +153,8 @@ option `notmuch-x--auto-update' is non-nil, also run `notmuch-x-update-timer'."
     (goto-char (point-max)))
   (if (string= event "finished\n")
       (progn
-        (when notmuch-x--notmuch-update-notify
+        (when (or notmuch-x--notmuch-update-notify-when-interactive
+                  notmuch-x--notmuch-update-notify)
           (message "[notmuch] Retrieving mail...done"))
         (with-temp-buffer
           (insert (format "\nLast database update: %s\n\n"
