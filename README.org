@@ -4,7 +4,7 @@
 
 * notmuch-x
 
-This package provides a set of custom extensions for the [[https://notmuchmail.org/][notmuch]] emacs-based interface.
+This package provides a set of custom extensions for the [[https://notmuchmail.org/][notmuch]] Emacs-based interface.
 
 
 ** Installation
@@ -26,7 +26,7 @@ Or, with use-package + straight.el:
 
 ** Usage
 
-Starting notmuch with =notmuch-x-run-notmuch= will also turn on the =notmuch-x-mode-line-indicator= and set the database update timer (=notmuch-x-update-timer=) to find and import any new messages periodically. The relevant customizable variables are accessible through the customize interface:
+Start notmuch with =notmuch-x-run-notmuch=: it will enable both the =notmuch-x-auto-update-mode=, to periodically find and import any new messages, and the mode-line indicator =notmuch-x-indicator-mode=. The relevant customizable variables are accessible through the customize interface:
 
 - =M-x customize-group RET notmuch-x=
 
