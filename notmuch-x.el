@@ -55,7 +55,7 @@
   "Notify in echo area when `notmuch-x-update' starts and finishes."
   :tag "Notmuch retrieval output buffer"
   :group 'notmuch-x
-  :type 'string)
+  :type 'boolean)
 
 (defcustom notmuch-x-search-query-new-mail
   "date:2d..now and tag:unread and not tag:trash"
@@ -87,7 +87,7 @@
   "When non-nil, `notmuch-x-run-notmuch' will start the auto update timer."
   :tag "Auto update"
   :group 'notmuch-x
-  :type 'string)
+  :type 'boolean)
 
 
 ;;;; Update Database
@@ -156,7 +156,9 @@
 ;;;###autoload
 (define-minor-mode notmuch-x-auto-update-mode
   "Toggle the auto update timer."
-  :init-value nil :global t :group 'notmuch-x
+  :init-value nil
+  :global t
+  :group 'notmuch-x
   (if notmuch-x-auto-update-mode
       (notmuch-x-start-auto-update-timer)
     (notmuch-x-stop-auto-update-timer)))
@@ -200,8 +202,6 @@ When `notmuch-x-auto-update' is non-nil, also start auto update timer."
 Default query is defined by `notmuch-x-search-query-new-mail'."
   (> (notmuch-x-new-mail-counter query) 0))
 
-;; (notmuch-saved-search-count "date:1d..now and tag:unread and tag:inbox")
-
 (defvar notmuch-x--modeline-indicator-string nil)
 
 (defvar-local notmuch-x-modeline-indicator
@@ -230,7 +230,9 @@ Default query is defined by `notmuch-x-search-query-new-mail'."
 ;;;###autoload
 (define-minor-mode notmuch-x-indicator-mode
   "Toggle the `notmuch-x-modeline-indicator'."
-  :init-value nil :global t :group 'notmuch-x
+  :init-value nil
+  :global t
+  :group 'notmuch-x
   (if notmuch-x-indicator-mode
       (progn
         (run-with-idle-timer notmuch-x-mail-indicator-idle-interval
