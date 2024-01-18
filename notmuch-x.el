@@ -284,7 +284,8 @@ Default query is defined by `notmuch-x-search-query-new-mail'."
   "Edit current notmuch search query."
   (interactive)
   (let ((query (read-from-minibuffer "Notmuch search: "
-                                     notmuch-search-query-string)))
+                                     notmuch-search-query-string
+                                     nil nil 'notmuch-search-history)))
     (add-to-list 'notmuch-search-history query)
     (notmuch-search query)))
 
