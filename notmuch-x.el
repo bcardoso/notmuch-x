@@ -322,7 +322,7 @@ Default query is defined by `notmuch-x-search-query-new-mail'."
   "Regexp for searching buttons and link on notmuch-show.")
 
 (defun notmuch-x-next-button-or-link (&optional backwards)
-  "Goto to the next button or link. When BACKWARDS is non-nil, go backwards."
+  "Go to next button or link. When BACKWARDS is non-nil, go backwards."
   (interactive)
   (let ((button-pos) (link-pos) (match))
     (setq match (if backwards
@@ -342,7 +342,7 @@ Default query is defined by `notmuch-x-search-query-new-mail'."
       (goto-char button-pos))))
 
 (defun notmuch-x-previous-button-or-link ()
-  "Goto to the previous button or link."
+  "Go to previous button or link."
   (interactive)
   (notmuch-x-next-button-or-link t))
 
