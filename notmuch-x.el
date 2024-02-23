@@ -250,9 +250,7 @@ Default query is defined by `notmuch-x-search-query-new-mail'."
   (let ((notmuch-archive-tags tags-list))
     (if (eq major-mode 'notmuch-search-mode)
         (notmuch-search-archive-thread)
-      (notmuch-show-archive-message)
-      (if (not (notmuch-show-next-open-message t))
-          (notmuch-search-refresh-view)))))
+      (notmuch-show-archive-message))))
 
 (defun notmuch-x-tag-thread (tags-list &optional show-next)
   "Set TAGS to thread. When SHOW-NEXT is non-nil, go to next thread."
