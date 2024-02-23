@@ -135,7 +135,7 @@
 (defvar notmuch-x--auto-update-timer nil
   "The auto update timer for `notmuch-x-update'.")
 
-(defun notmuch-x-start-auto-update-timer ()
+(defun notmuch-x-auto-update-start-timer ()
   "Start auto update timer for `notmuch-x-update'."
   (interactive)
   (if (not notmuch-x--auto-update-timer)
@@ -144,7 +144,7 @@
                             #'notmuch-x-update))
     (message "[notmuch] Auto update timer is already running.")))
 
-(defun notmuch-x-stop-auto-update-timer ()
+(defun notmuch-x-auto-update-stop-timer ()
   "Stop auto update timer for `notmuch-x-update'."
   (interactive)
   (if (not notmuch-x--auto-update-timer)
@@ -160,14 +160,14 @@
   :global t
   :group 'notmuch-x
   (if notmuch-x-auto-update-mode
-      (notmuch-x-start-auto-update-timer)
-    (notmuch-x-stop-auto-update-timer)))
+      (notmuch-x-auto-update-start-timer)
+    (notmuch-x-auto-update-stop-timer)))
 
 ;;;###autoload
 (defun notmuch-x-update-dwim (&optional arg)
   "Retrieve mail and update notmuch database. With ARG, start timer."
   (interactive "P")
-  (when arg (notmuch-x-start-auto-update-timer))
+  (when arg (notmuch-x-auto-update-start-timer))
   (setq notmuch-x-update-notify-if-interactive
         (called-interactively-p 'interactive))
   (notmuch-x-update))
