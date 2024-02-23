@@ -245,9 +245,8 @@ Default query is defined by `notmuch-x-search-query-new-mail'."
 
 ;;;; Tagging
 
-(defun notmuch-x-tag-dwim (tags)
+(defun notmuch-x-tag (tags)
   "Set TAGS to message(s)."
-  (interactive)
   (let ((notmuch-archive-tags tags))
     (if (eq major-mode 'notmuch-search-mode)
         (notmuch-search-archive-thread)
@@ -255,9 +254,8 @@ Default query is defined by `notmuch-x-search-query-new-mail'."
       (if (not (notmuch-show-next-open-message t))
           (notmuch-search-refresh-view)))))
 
-(defun notmuch-x-tag-thread-dwim (tags &optional show-next)
+(defun notmuch-x-tag-thread (tags &optional show-next)
   "Set TAGS to thread. When SHOW-NEXT is non-nil, go to next thread."
-  (interactive)
   (let ((notmuch-archive-tags tags))
     (if (eq major-mode 'notmuch-search-mode)
         (notmuch-search-archive-thread)
@@ -267,15 +265,14 @@ Default query is defined by `notmuch-x-search-query-new-mail'."
         (notmuch-show-next-thread)
         (notmuch-search-refresh-view)))))
 
-(defun notmuch-x-tag-toggle-dwim (tag)
+(defun notmuch-x-tag-toggle (tag)
   "Toggle TAG."
-  (interactive)
   (let ((current-tags (if (eq major-mode 'notmuch-search-mode)
                           (notmuch-search-get-tags)
                         (notmuch-show-get-tags))))
-    (notmuch-x-tag-dwim (if (member tag current-tags)
-                             (list (concat "-" tag))
-                           (list (concat "+" tag))))))
+    (notmuch-x-tag (if (member tag current-tags)
+                       (list (concat "-" tag))
+                     (list (concat "+" tag))))))
 
 
 ;;;; Search mode
