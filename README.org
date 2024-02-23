@@ -43,6 +43,7 @@ Below are my current =notmuch-x= configuration and keybindings.
          ("C-c M"            . notmuch-x-update-dwim)
          ("C-x m"            . notmuch-mua-new-mail)
          (:map notmuch-search-mode-map
+               ("G"          . notmuch-x-update-dwim)
                ("Q"          . notmuch-x-kill-all-search-buffers)
                ("S"          . notmuch-x-edit-current-search)
                ("U"          . notmuch-unthreaded)
@@ -72,30 +73,30 @@ Below are my current =notmuch-x= configuration and keybindings.
   (defun my/notmuch-tag-toggle-unread ()
     "Toggle 'unread' tag."
     (interactive)
-    (notmuch-x-tag-toggle-dwim "unread"))
+    (notmuch-x-tag-toggle "unread"))
 
   (defun my/notmuch-tag-toggle-flagged ()
     "Toggle 'flagged' tag."
     (interactive)
-    (notmuch-x-tag-toggle-dwim "flagged"))
+    (notmuch-x-tag-toggle "flagged"))
 
   (defun my/notmuch-tag-archived ()
     "Tag thread as 'archived'."
     (interactive)
-    (notmuch-x-tag-thread-dwim '("+archived" "-inbox" "-todo" "-trash" "-unread") t))
+    (notmuch-x-tag-thread '("+archived" "-inbox" "-todo" "-trash" "-unread") t))
 
   (defun my/notmuch-tag-todo ()
     "Tag selected message(s) as 'todo'."
     (interactive)
-    (notmuch-x-tag-dwim '("+todo" "+inbox" "-archived" "-trash")))
+    (notmuch-x-tag '("+todo" "+inbox" "-archived" "-trash")))
 
   (defun my/notmuch-tag-inbox ()
     "Tag selected message(s) as 'inbox'."
     (interactive)
-    (notmuch-x-tag-dwim '("+inbox" "-trash" "-archived")))
+    (notmuch-x-tag '("+inbox" "-trash" "-archived")))
 
   (defun my/notmuch-tag-trash ()
     "Tag selected message(s) as 'trash'."
     (interactive)
-    (notmuch-x-tag-dwim '("+trash" "-inbox" "-archived" "-todo" "-unread"))))
+    (notmuch-x-tag '("+trash" "-inbox" "-archived" "-todo" "-unread"))))
 #+end_src
