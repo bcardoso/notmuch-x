@@ -245,18 +245,18 @@ Default query is defined by `notmuch-x-search-query-new-mail'."
 
 ;;;; Tagging
 
-(defun notmuch-x-tag (tags)
+(defun notmuch-x-tag (tags-list)
   "Set TAGS to message(s)."
-  (let ((notmuch-archive-tags tags))
+  (let ((notmuch-archive-tags tags-list))
     (if (eq major-mode 'notmuch-search-mode)
         (notmuch-search-archive-thread)
       (notmuch-show-archive-message)
       (if (not (notmuch-show-next-open-message t))
           (notmuch-search-refresh-view)))))
 
-(defun notmuch-x-tag-thread (tags &optional show-next)
+(defun notmuch-x-tag-thread (tags-list &optional show-next)
   "Set TAGS to thread. When SHOW-NEXT is non-nil, go to next thread."
-  (let ((notmuch-archive-tags tags))
+  (let ((notmuch-archive-tags tags-list))
     (if (eq major-mode 'notmuch-search-mode)
         (notmuch-search-archive-thread)
       (notmuch-show-archive-thread)
