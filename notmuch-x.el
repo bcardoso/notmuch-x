@@ -260,8 +260,7 @@ Default query is defined by `notmuch-x-search-query-new-mail'."
       (notmuch-show-archive-thread)
       (if show-next
           (notmuch-show-next-thread show-next)
-        (notmuch-show-next-thread)
-        (notmuch-search-refresh-view)))))
+        (notmuch-show-next-thread)))))
 
 (defun notmuch-x-tag-toggle (tag)
   "Toggle TAG."
