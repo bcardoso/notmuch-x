@@ -301,17 +301,16 @@ Default query is defined by `notmuch-x-search-query-new-mail'."
 (defun notmuch-x-toggle-thread-visibility ()
   "Toggle expand/collapse all messages in thread."
   (interactive)
-  (let ((position (notmuch-show-message-top))
-        (visibility (plist-get
-                     (notmuch-show-get-message-properties)
-                     :message-visible)))
-    (goto-char (point-min))
-    (while (progn
-             (let ((props (notmuch-show-get-message-properties)))
-               (notmuch-show-message-visible props
-                                             (not visibility)))
-             (notmuch-show-goto-message-next)))
-    (goto-char position)))
+  (save-excursion
+    (let ((visibility (plist-get
+                       (notmuch-show-get-message-properties)
+                       :message-visible)))
+      (goto-char (point-min))
+      (while (progn
+               (let ((props (notmuch-show-get-message-properties)))
+                 (notmuch-show-message-visible props
+                                               (not visibility)))
+               (notmuch-show-goto-message-next))))))
 
 (defvar notmuch-x--button-url-regexp (concat
                                       "\\[ .*\\]$\\|"
