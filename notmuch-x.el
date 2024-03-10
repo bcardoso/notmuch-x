@@ -258,9 +258,8 @@ Default query is defined by `notmuch-x-search-query-new-mail'."
     (if (eq major-mode 'notmuch-search-mode)
         (notmuch-search-archive-thread)
       (notmuch-show-archive-thread)
-      (if show-next
-          (notmuch-show-next-thread show-next)
-        (notmuch-show-next-thread)))))
+      (when show-next
+        (notmuch-show-next-thread-show)))))
 
 (defun notmuch-x-tag-toggle (tag)
   "Toggle TAG."
