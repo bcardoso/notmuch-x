@@ -314,7 +314,7 @@ Default query is defined by `notmuch-x-search-query-new-mail'."
 (defvar notmuch-x--button-url-regexp (concat
                                       "\\[ .*\\]$\\|"
                                       browse-url-button-regexp)
-  "Regexp for searching buttons and link on notmuch-show.")
+  "Regexp for searching buttons and link on `notmuch-show'.")
 
 (defun notmuch-x-next-button-or-link (&optional backwards)
   "Go to next button or link. When BACKWARDS is non-nil, go backwards."
