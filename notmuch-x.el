@@ -357,6 +357,61 @@ Default query is defined by `notmuch-x-search-query-new-mail'."
       (kill-buffer (mm-handle-buffer handle)))))
 
 
+;;;; Alternate format for notmuch-search fields
+
+(defvar notmuch-x-search-truncate-subject-width 68)
+
+(defvar notmuch-x-search-date-format "%F %R")
+
+(defun notmuch-x-search-insert-field (field format-string result)
+  "Modified version of `notmuch-search-insert-field'.
+Date is format is defined by `notmuch-x-search-date-format'.
+Subject is truncated to `notmuch-x-search-truncate-subject-width'."
+  (pcase field
+    ((pred functionp)
+     (insert (funcall field format-string result)))
+    ("date"
+     (insert (propertize
+              (format format-string
+                      (format-time-string notmuch-x-search-date-format
+                                          (plist-get result :timestamp)))
+              'face 'notmuch-search-date)))
+    ("count"
+     (insert (propertize
+              (format format-string
+                      (format "[%s/%s]"
+                              (plist-get result :matched)
+                              (plist-get result :total)))
+              'face 'notmuch-search-count)))
+    ("subject"
+     (insert (propertize (format
+                          format-string
+                          (truncate-string-to-width
+                           (notmuch-sanitize (plist-get result :subject))
+                           notmuch-x-search-truncate-subject-width))
+                         'face 'notmuch-search-subject)))
+    ("authors"
+     (notmuch-search-insert-authors format-string
+                                    (notmuch-sanitize
+                                     (plist-get result :authors))))
+    ("tags"
+     (let ((tags (plist-get result :tags))
+           (orig-tags (plist-get result :orig-tags)))
+       (insert (format format-string
+                       (notmuch-tag-format-tags tags orig-tags)))))))
+
+(define-minor-mode notmuch-x-search-alt-format-mode
+  "Toggle the `notmuch-x-search-alt-format-mode'."
+  :init-value nil
+  :global t
+  :group 'notmuch-x
+  (if notmuch-x-search-alt-format-mode
+      (advice-add 'notmuch-search-insert-field
+                  :override #'notmuch-x-search-insert-field)
+    (advice-remove 'notmuch-search-insert-field
+                   #'notmuch-x-search-insert-field)))
+
+
 (provide 'notmuch-x)
 
 ;;; notmuch-x.el ends here
