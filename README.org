@@ -71,6 +71,8 @@ Below are my current =notmuch-x= configuration and keybindings.
                ("d"          . my/notmuch-tag-trash)))
   :config
   ;; Alternate format for notmuch-search fields
+  (setq notmuch-x-search-date-format "%F %R")
+  (setq notmuch-x-search-truncate-subject-width 68)
   (notmuch-x-search-alt-format-mode +1)
 
   (defun my/notmuch-tag-toggle-unread ()
