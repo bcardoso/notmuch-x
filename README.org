@@ -70,6 +70,9 @@ Below are my current =notmuch-x= configuration and keybindings.
                ("i"          . my/notmuch-tag-inbox)
                ("d"          . my/notmuch-tag-trash)))
   :config
+  ;; Alternate format for notmuch-search fields
+  (notmuch-x-search-alt-format-mode +1)
+
   (defun my/notmuch-tag-toggle-unread ()
     "Toggle 'unread' tag."
     (interactive)
