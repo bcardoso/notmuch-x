@@ -95,11 +95,11 @@
 (defvar notmuch-x-update-notify-if-interactive nil
   "Notify update when `notmuch-x-update-dwim' is called interactively.")
 
-(defun notmuch-x--update-notify (str)
-  "Notify update status STR."
+(defun notmuch-x--update-notify (msg)
+  "Notify update status MSG."
   (when (or notmuch-x-update-notify-if-interactive
             notmuch-x-update-notify)
-    (message str)))
+    (message msg)))
 
 (defun notmuch-x-update ()
   "Retrieve mail and update notmuch database."
@@ -224,7 +224,9 @@ Default query is defined by `notmuch-x-search-query-new-mail'."
            'keymap '(mode-line keymap (mouse-1 . notmuch-x-search-new-mail))
            'help-echo (if (notmuch-x-new-mail-p)
                           (let ((num (notmuch-x-new-mail-counter)))
-                            (format "%s message%s" num (if (> num 1) "s" "")))
+                            (format "%s message%s"
+                                    num
+                                    (if (> num 1) "s" "")))
                         "No new mail")))))
 
 ;;;###autoload
@@ -266,9 +268,9 @@ Default query is defined by `notmuch-x-search-query-new-mail'."
   (let ((current-tags (if (eq major-mode 'notmuch-search-mode)
                           (notmuch-search-get-tags)
                         (notmuch-show-get-tags))))
-    (notmuch-x-tag (if (member tag current-tags)
-                       (list (concat "-" tag))
-                     (list (concat "+" tag))))))
+    (notmuch-x-tag (list (concat
+                          (if (member tag current-tags) "-" "+")
+                          tag)))))
 
 
 ;;;; Search mode
@@ -311,9 +313,8 @@ Default query is defined by `notmuch-x-search-query-new-mail'."
                                                (not visibility)))
                (notmuch-show-goto-message-next))))))
 
-(defvar notmuch-x--button-url-regexp (concat
-                                      "\\[ .*\\]$\\|"
-                                      browse-url-button-regexp)
+(defvar notmuch-x--button-url-regexp
+  (concat "\\(\\[ .*\\]$\\|" browse-url-button-regexp "\\)")
   "Regexp for searching buttons and link on `notmuch-show'.")
 
 (defun notmuch-x-next-button-or-link (&optional backwards)
@@ -348,8 +349,9 @@ Default query is defined by `notmuch-x-search-query-new-mail'."
         (file (concat notmuch-x-view-part-temp-dir
                       (format "notmuch-mime-part.")
                       (format "%s." (notmuch-show-get-timestamp))
-                      (replace-regexp-in-string "\\([^[:print:]]\\|/\\)" ""
-                                                (notmuch-show-get-subject)))))
+                      (replace-regexp-in-string
+                       "\\([^[:print:]]\\|/\\)" ""
+                       (notmuch-show-get-subject)))))
     (unwind-protect
         (with-temp-buffer
           (mm-save-part-to-file handle file))
