@@ -303,15 +303,13 @@ Default query is defined by `notmuch-x-search-query-new-mail'."
   "Toggle expand/collapse all messages in thread."
   (interactive)
   (save-excursion
-    (let ((visibility (plist-get
-                       (notmuch-show-get-message-properties)
-                       :message-visible)))
+    (let ((visible (plist-get (notmuch-show-get-message-properties)
+                              :message-visible)))
       (goto-char (point-min))
-      (while (progn
-               (let ((props (notmuch-show-get-message-properties)))
-                 (notmuch-show-message-visible props
-                                               (not visibility)))
-               (notmuch-show-goto-message-next))))))
+      (cl-loop do (notmuch-show-message-visible
+                   (notmuch-show-get-message-properties)
+                   (not visible))
+               until (not (notmuch-show-goto-message-next))))))
 
 (defvar notmuch-x--button-url-regexp
   (concat "\\(\\[ .*\\]$\\|" browse-url-button-regexp "\\)")
