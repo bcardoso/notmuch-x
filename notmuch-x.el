@@ -186,6 +186,7 @@ When `notmuch-x-auto-update' is non-nil, also start auto update timer."
 
 ;;;; Mail Indicator
 
+;;;###autoload
 (defun notmuch-x-search-new-mail ()
   "Search query for new mail."
   (interactive)
