@@ -310,7 +310,7 @@ Default query is defined by `notmuch-x-search-query-new-mail'."
       (cl-loop do (notmuch-show-message-visible
                    (notmuch-show-get-message-properties)
                    (not visible))
-               until (not (notmuch-show-goto-message-next))))))
+               while (notmuch-show-goto-message-next)))))
 
 (defvar notmuch-x--button-url-regexp
   (concat "\\(\\[ .*\\]$\\|" browse-url-button-regexp "\\)")
