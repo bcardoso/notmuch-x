@@ -146,11 +146,12 @@
   (interactive)
   (if (not notmuch-x--auto-update-timer)
       (setq notmuch-x--auto-update-timer
-            (if notmuch-x-auto-update-when-idle
-                (run-with-idle-timer (* 60 notmuch-x-auto-update-interval)
-                                     t #'notmuch-x-update)
-              (run-with-timer 1 (* 60 notmuch-x-auto-update-interval)
-                              #'notmuch-x-update)))
+            (if (not notmuch-x-auto-update-when-idle)
+                (run-with-timer 1 (* 60 notmuch-x-auto-update-interval)
+                                #'notmuch-x-update)
+              (notmuch-x-update)
+              (run-with-idle-timer (* 60 notmuch-x-auto-update-interval)
+                                   t #'notmuch-x-update)))
     (message "[notmuch] Auto update timer is already running.")))
 
 (defun notmuch-x-auto-update-stop-timer ()
