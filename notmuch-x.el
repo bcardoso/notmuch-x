@@ -92,7 +92,7 @@
 (defvar notmuch-x-update-notify-if-interactive nil
   "Notify update when `notmuch-x-update-dwim' is called interactively.")
 
-(defun notmuch-x--update-notify (msg)
+(defun notmuch-x-update-notify (msg)
   "Notify update status MSG."
   (when (or notmuch-x-update-notify-if-interactive
             notmuch-x-update-notify)
@@ -101,7 +101,7 @@
 (defun notmuch-x-update ()
   "Retrieve mail and update notmuch database."
   (interactive)
-  (notmuch-x--update-notify "[notmuch] Retrieving mail...")
+  (notmuch-x-update-notify "[notmuch] Retrieving mail...")
   (make-process :name     "notmuch-update"
                 :buffer   notmuch-x-update-buffer
                 :command  '("notmuch" "new")
@@ -111,47 +111,44 @@
 
 (defun notmuch-x-update-sentinel (process event)
   "Sentinel to run after notmuch update."
-  (with-current-buffer notmuch-x-update-buffer
-    (setq-local buffer-read-only nil)
-    (goto-char (point-max)))
   (if (string= event "finished\n")
       (progn
-        (notmuch-x--update-notify "[notmuch] Retrieving mail...done")
-        (with-temp-buffer
+        (notmuch-x-update-notify "[notmuch] Retrieving mail...done")
+        (with-current-buffer notmuch-x-update-buffer
+          (setq-local buffer-read-only nil)
+          (goto-char (point-max))
           (insert (format "\nLast database update: %s\n\n"
                           (format-time-string "%F %T")))
-          (append-to-buffer notmuch-x-update-buffer
-                            (point-min) (point-max)))
-        (when notmuch-x-indicator-mode (notmuch-x-indicator-update)))
+          (goto-char (point-max))
+          (setq-local buffer-read-only t))
+        (and notmuch-x-indicator-mode (notmuch-x-indicator-update)))
     (message "[notmuch] Something went wrong.")
     (switch-to-buffer notmuch-x-update-buffer))
-  (with-current-buffer notmuch-x-update-buffer
-    (setq-local buffer-read-only t))
   (setq notmuch-x-update-notify-if-interactive nil))
 
-(defvar notmuch-x--auto-update-timer nil
+(defvar notmuch-x-auto-update-timer nil
   "The auto update timer for `notmuch-x-update'.")
 
 (defun notmuch-x-auto-update-start-timer ()
   "Start auto update timer for `notmuch-x-update'."
   (interactive)
-  (if (not notmuch-x--auto-update-timer)
-      (setq notmuch-x--auto-update-timer
-            (if (not notmuch-x-auto-update-when-idle)
-                (run-with-timer 1 (* 60 notmuch-x-auto-update-interval)
-                                #'notmuch-x-update)
-              (notmuch-x-update)
-              (run-with-idle-timer (* 60 notmuch-x-auto-update-interval)
-                                   t #'notmuch-x-update)))
-    (message "[notmuch] Auto update timer is already running.")))
+  (if notmuch-x-auto-update-timer
+      (message "[notmuch] Auto update timer is already running.")
+    (setq notmuch-x-auto-update-timer
+          (if (not notmuch-x-auto-update-when-idle)
+              (run-with-timer 1 (* 60 notmuch-x-auto-update-interval)
+                              #'notmuch-x-update)
+            (notmuch-x-update)
+            (run-with-idle-timer (* 60 notmuch-x-auto-update-interval)
+                                 t #'notmuch-x-update)))))
 
 (defun notmuch-x-auto-update-stop-timer ()
   "Stop auto update timer for `notmuch-x-update'."
   (interactive)
-  (if (not notmuch-x--auto-update-timer)
+  (if (not notmuch-x-auto-update-timer)
       (message "[notmuch] There is no auto update timer running.")
     (cancel-function-timers #'notmuch-x-update)
-    (setq notmuch-x--auto-update-timer nil)
+    (setq notmuch-x-auto-update-timer nil)
     (message "[notmuch] Auto update timer canceled.")))
 
 ;;;###autoload
@@ -200,20 +197,20 @@ When `notmuch-x-auto-update' is non-nil, also start auto update timer."
                      (or query notmuch-x-search-query-new-mail))))
 
 (defun notmuch-x-new-mail-p (&optional query)
-  "Return non-nil when there is new mail for optional QUERY.
+  "Return non-nil when there is new mail for QUERY.
 Default query is defined by `notmuch-x-search-query-new-mail'."
   (> (notmuch-x-new-mail-counter query) 0))
 
-(defvar notmuch-x--modeline-indicator-string nil)
+(defvar notmuch-x-modeline-indicator-string nil)
 
 (defvar-local notmuch-x-modeline-indicator
-    '(:eval notmuch-x--modeline-indicator-string))
+    '(:eval notmuch-x-modeline-indicator-string))
 
 (put 'notmuch-x-modeline-indicator 'risky-local-variable t)
 
 (defun notmuch-x-indicator-update ()
   "Update notmuch mode line indicator."
-  (setq notmuch-x--modeline-indicator-string
+  (setq notmuch-x-modeline-indicator-string
         (when (or (notmuch-x-new-mail-p)
                   (not notmuch-x-mail-indicator-auto-hide))
           (propertize
@@ -313,7 +310,7 @@ Default query is defined by `notmuch-x-search-query-new-mail'."
                    (not visible))
                while (notmuch-show-goto-message-next)))))
 
-(defvar notmuch-x--button-url-regexp
+(defvar notmuch-x-button-url-regexp
   (concat "\\(\\[ .*\\]$\\|" browse-url-button-regexp "\\)")
   "Regexp for searching buttons and link on `notmuch-show'.")
 
@@ -328,8 +325,8 @@ Default query is defined by `notmuch-x-search-query-new-mail'."
         (setq link-pos (prop-match-beginning match)))
     (goto-char (1+ (point))) ; NOTE: prevents getting stuck in word beginning
     (if backwards
-        (search-backward-regexp notmuch-x--button-url-regexp nil t nil)
-      (search-forward-regexp notmuch-x--button-url-regexp nil t nil))
+        (search-backward-regexp notmuch-x-button-url-regexp nil t nil)
+      (search-forward-regexp notmuch-x-button-url-regexp nil t nil))
     (setq button-pos (match-beginning 0))
 
     ;;  NOTE: not the ideal, but a good enough behavior
@@ -367,7 +364,7 @@ Default query is defined by `notmuch-x-search-query-new-mail'."
 
 (defun notmuch-x-search-insert-field (field format-string result)
   "Modified version of `notmuch-search-insert-field'.
-Date is format is defined by `notmuch-x-search-date-format'.
+Date format is defined by `notmuch-x-search-date-format'.
 Subject is truncated to `notmuch-x-search-truncate-subject-width'."
   (pcase field
     ((pred functionp)
