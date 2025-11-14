@@ -4,7 +4,7 @@
 
 * notmuch-x
 
-This package provides a set of custom extensions for the [[https://notmuchmail.org/][notmuch]] Emacs-based interface.
+This package provides a set of custom extensions for the Emacs [[https://notmuchmail.org/][notmuch]] Emacs interface.
 
 
 ** Installation
@@ -73,35 +73,36 @@ Below are my current =notmuch-x= configuration and keybindings.
   ;; Alternate format for notmuch-search fields
   (setq notmuch-x-search-date-format "%F %R")
   (setq notmuch-x-search-truncate-subject-width 68)
-  (notmuch-x-search-alt-format-mode +1)
+  (notmuch-x-search-alt-field-format-mode +1)
 
   (defun my/notmuch-tag-toggle-unread ()
-    "Toggle 'unread' tag."
+    "Toggle \"unread\" tag."
     (interactive)
     (notmuch-x-tag-toggle "unread"))
 
   (defun my/notmuch-tag-toggle-flagged ()
-    "Toggle 'flagged' tag."
+    "Toggle \"flagged\" tag."
     (interactive)
     (notmuch-x-tag-toggle "flagged"))
 
   (defun my/notmuch-tag-archived ()
-    "Tag thread as 'archived'."
+    "Tag thread as \"archived\"."
     (interactive)
-    (notmuch-x-tag-thread '("+archived" "-inbox" "-todo" "-trash" "-unread") t))
+    (notmuch-x-tag-thread '("+archived" "-inbox" "-todo" "-trash" "-unread")
+                          :show-next))
 
   (defun my/notmuch-tag-todo ()
-    "Tag selected message(s) as 'todo'."
+    "Tag selected message(s) as \"todo\"."
     (interactive)
     (notmuch-x-tag '("+todo" "+inbox" "-archived" "-trash")))
 
   (defun my/notmuch-tag-inbox ()
-    "Tag selected message(s) as 'inbox'."
+    "Tag selected message(s) as \"inbox\"."
     (interactive)
     (notmuch-x-tag '("+inbox" "-trash" "-archived")))
 
   (defun my/notmuch-tag-trash ()
-    "Tag selected message(s) as 'trash'."
+    "Tag selected message(s) as \"trash\"."
     (interactive)
     (notmuch-x-tag '("+trash" "-inbox" "-archived" "-todo" "-unread"))))
 #+end_src

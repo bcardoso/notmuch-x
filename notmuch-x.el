@@ -399,12 +399,12 @@ Subject is truncated to `notmuch-x-search-truncate-subject-width'."
        (insert (format format-string
                        (notmuch-tag-format-tags tags orig-tags)))))))
 
-(define-minor-mode notmuch-x-search-alt-format-mode
-  "Toggle the `notmuch-x-search-alt-format-mode'."
+(define-minor-mode notmuch-x-search-alt-field-format-mode
+  "Toggle the `notmuch-x-search-alt-field-format-mode'."
   :init-value nil
   :global t
   :group 'notmuch-x
-  (if notmuch-x-search-alt-format-mode
+  (if notmuch-x-search-alt-field-format-mode
       (advice-add 'notmuch-search-insert-field
                   :override #'notmuch-x-search-insert-field)
     (advice-remove 'notmuch-search-insert-field
