@@ -1,10 +1,10 @@
 ;;; notmuch-x.el --- Notmuch extensions -*- lexical-binding: t -*-
 
-;; Copyright (C) 2021-2023 Bruno Cardoso
+;; Copyright (C) 2021-2025 Bruno Cardoso
 
 ;; Author: Bruno Cardoso <cardoso.bc@gmail.com>
 ;; URL: https://github.com/bcardoso/notmuch-x
-;; Version: 0.2
+;; Version: 0.3
 ;; Package-Requires: ((emacs "27.2"))
 
 ;; This file is NOT part of GNU Emacs.
@@ -37,62 +37,53 @@
 
 (defgroup notmuch-x nil
   "Group for `notmuch-x' customizations."
-  :group 'notmuch)
+  :group 'notmuch
+  :group 'notmuch-x)
 
 (defcustom notmuch-x-auto-update-interval 15
   "Number of minutes between each mail retrieval by `notmuch-x-update'."
   :tag "Notmuch retrieval interval"
-  :group 'notmuch-x
-  :type 'integer)
+  :type 'natnum)
 
 (defcustom notmuch-x-update-buffer "*notmuch-update*"
   "Name of the buffer for the `notmuch-x-update' output."
   :tag "Notmuch retrieval output buffer"
-  :group 'notmuch-x
   :type 'string)
 
 (defcustom notmuch-x-update-notify t
   "Notify in echo area when `notmuch-x-update' starts and finishes."
   :tag "Notmuch retrieval output buffer"
-  :group 'notmuch-x
   :type 'boolean)
 
 (defcustom notmuch-x-search-query-new-mail
   "date:2d..now and tag:unread and not tag:trash"
   "Search query for new mail for `notmuch-x-indicator-mode'."
   :tag "Search query for new mail"
-  :group 'notmuch-x
   :type 'string)
 
 (defcustom notmuch-x-mail-indicator-idle-interval 15
   "Number of idle seconds to update the `notmuch-x-modeline-indicator'."
   :tag "Update interval for the mode line indicator"
-  :group 'notmuch-x
-  :type 'integer)
+  :type 'natnum)
 
 (defcustom notmuch-x-mail-indicator-auto-hide t
   "Hide the `notmuch-x-modeline-indicator' when there are no new messages."
   :tag "Update interval for the mode line indicator"
-  :group 'notmuch-x
   :type 'boolean)
 
-(defcustom notmuch-x-view-part-temp-dir
-  "/tmp/"
+(defcustom notmuch-x-view-part-temp-dir "/tmp/"
   "Temporary directory to save MIME parts."
   :tag "Temporary directory to save MIME parts"
-  :group 'notmuch-x
-  :type 'string)
+  :type 'directory)
 
 (defcustom notmuch-x-auto-update t
   "When non-nil, `notmuch-x-run-notmuch' will start the auto update timer."
   :tag "Auto update"
-  :group 'notmuch-x
   :type 'boolean)
 
 (defcustom notmuch-x-auto-update-when-idle nil
   "When non-nil, `notmuch-x-auto-update-mode' will use an idle timer instead."
-  :tag "Auto update"
-  :group 'notmuch-x
+  :tag "Auto update when idle"
   :type 'boolean)
 
 
