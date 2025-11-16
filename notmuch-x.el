@@ -109,8 +109,8 @@
   (with-current-buffer notmuch-x-update-buffer
     (special-mode)))
 
-(defun notmuch-x-update-sentinel (process event)
-  "Sentinel to run after notmuch update."
+(defun notmuch-x-update-sentinel (_ event)
+  "Sentinel to run after notmuch update EVENT is finished."
   (if (string= event "finished\n")
       (progn
         (notmuch-x-update-notify "[notmuch] Retrieving mail...done")
